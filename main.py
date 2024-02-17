@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 from sqlalchemy import Column, Integer, String, Numeric, create_engine, text
 
 app = Flask(__name__)
-conn_str = "mysql://root:iit123@localhost/boatdb"
+conn_str = "mysql+pymysql://root:root@localhost:3306/boatdb"
 engine = create_engine(conn_str, echo=True)
 conn = engine.connect()
 
@@ -12,12 +12,10 @@ conn = engine.connect()
 def index():
     return render_template('index.html')
 
-
 # remember how to take user inputs?
 @app.route('/user/<name>')
 def user(name):
     return render_template('user.html', name=name)
-
 
 # get all boats
 # this is done to handle requests for two routes -
@@ -46,8 +44,13 @@ def create_boat():
             text("INSERT INTO boats values (:id, :name, :type, :owner_id, :rental_price)"),
             request.form
         )
+        # print(request.form)
+
+        conn.commit()
+
         return render_template('boats_create.html', error=None, success="Data inserted successfully!")
     except Exception as e:
+        print(e)
         error = e.orig.args[1]
         print(error)
         return render_template('boats_create.html', error=error, success=None)
