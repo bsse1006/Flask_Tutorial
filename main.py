@@ -2,22 +2,19 @@ from flask import Flask, render_template
 from sqlalchemy import Column, Integer, String, Numeric, create_engine, text
 
 app = Flask(__name__)
-conn_str = "mysql://root:iit123@localhost/boatdb"
+conn_str = "mysql+pymysql://root:root@localhost/boatdb"
 engine = create_engine(conn_str, echo=True)
 conn = engine.connect()
-
 
 # render a file
 @app.route('/')
 def index():
     return render_template('index.html')
 
-
 # remember how to take user inputs?
 @app.route('/user/<name>')
 def user(name):
     return render_template('user.html', name=name)
-
 
 # get all boats
 @app.route('/boats/')
